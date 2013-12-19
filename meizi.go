@@ -16,6 +16,7 @@ import (
 	"os"
 	"regexp"
 	"runtime"
+	"runtime/pprof"
 	"time"
 )
 
@@ -29,11 +30,12 @@ var (
 )
 
 var (
-	gBaseUrl   = "http://jandan.net"
-	gPartUrl   = "ooxx"
-	gStartPage = flag.Int("s", 0, "start of the page to fetch, the default is 0")
-	gEndPage   = flag.Int("e", 1, "end of the page to fetch, the defult is 1")
-	gSavePath  = flag.String("f", "", "the path to save your images")
+	gBaseUrl    = "http://jandan.net"
+	gPartUrl    = "ooxx"
+	gStartPage  = flag.Int("s", 0, "start of the page to fetch, the default is 0")
+	gEndPage    = flag.Int("e", 1, "end of the page to fetch, the defult is 1")
+	gSavePath   = flag.String("f", "", "the path to save your images")
+	gCpuProfile = flag.String("cpu", "", "write cpu profile to file")
 )
 
 var (
@@ -57,6 +59,16 @@ func main() {
 	if path[len(path)-2:] != "/" {
 		*gSavePath += "/"
 	}
+	if *gCpuProfile != "" {
+		f, err := os.Create(*gCpuProfile)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
+
 	watchPanic()
 
 	beforeFetchTime := time.Now()
