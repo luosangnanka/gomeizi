@@ -39,7 +39,7 @@ func main() {
 		<-gQuitChan
 	}
 
-	close(gUrlChan)
+	close(gURLChan)
 	for i := 0; i < 10; i++ {
 		<-gQuitChan
 	}
@@ -62,7 +62,7 @@ func getUrls(pageNum int) {
 		gQuitChan <- true
 	}()
 
-	url := fmt.Sprintf("%s/%s/page-%d", gBaseUrl, gPartUrl, pageNum)
+	url := fmt.Sprintf("%s/%s/page-%d", gBaseURL, gPartURL, pageNum)
 	downloadInfo, err := Get(url).Response()
 	if err != nil {
 		gErrorChan <- err
@@ -85,7 +85,7 @@ func getUrls(pageNum int) {
 	imgUrls := gRegImg.FindAllSubmatch(liCommentM, -1)
 
 	for _, v := range imgUrls {
-		gUrlChan <- string(v[1])
+		gURLChan <- string(v[1])
 	}
 
 	return
@@ -97,7 +97,7 @@ func savePic() {
 		gQuitChan <- true
 	}()
 
-	for v := range gUrlChan {
+	for v := range gURLChan {
 		fmt.Println(v)
 
 		imageName := gSave.ReplaceAllString(v, "")
